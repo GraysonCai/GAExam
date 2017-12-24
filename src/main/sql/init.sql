@@ -66,9 +66,9 @@ CREATE TABLE ga_role (
   DEFAULT CHARSET = utf8
   COMMENT ='角色表';
 
-INSERT INTO ga_role (role_name, authority, create_by) VALUES ('管理员', 'ADMIN', 1);
-INSERT INTO ga_role (role_name, authority, create_by) VALUES ('教师', 'TEACHER', 1);
-INSERT INTO ga_role (role_name, authority, create_by) VALUES ('学生', 'STUDENT', 1);
+INSERT INTO ga_role (role_name, authority, create_by) VALUES ('管理员', 'ROLE_ADMIN', 1);
+INSERT INTO ga_role (role_name, authority, create_by) VALUES ('教师', 'ROLE_TEACHER', 1);
+INSERT INTO ga_role (role_name, authority, create_by) VALUES ('学生', 'ROLE_STUDENT', 1);
 
 # 用户角色关联表
 DROP TABLE IF EXISTS ga_user_role;

@@ -6,6 +6,8 @@ import com.cgs.gaexam.model.User;
 import com.cgs.gaexam.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,17 +21,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @Resource
+
+    @Autowired
     private UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TEACHER')")
     @PostMapping
     public Result add(@RequestBody User user) {
         userService.save(user);
         return ResultGenerator.genSuccessResult();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TEACHER')")
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable Integer id) {
+    public Result delete(@PathVariable Long id) {
         userService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
@@ -41,7 +46,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Result detail(@PathVariable Integer id) {
+    @PostAuthorize("returnObject.data.username == principal.username or hasRole('ROLE_TEACHER')")
+    public Result detail(@PathVariable Long id) {
         User user = userService.findById(id);
         return ResultGenerator.genSuccessResult(user);
     }

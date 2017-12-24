@@ -25,6 +25,7 @@ public class AuthController {
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public Result createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
+        System.err.println(authenticationRequest.getUsername() + authenticationRequest.getPassword());
         final String token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         // Return the token
         return ResultGenerator.genSuccessResult(token);

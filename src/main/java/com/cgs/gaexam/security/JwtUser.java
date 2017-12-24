@@ -87,10 +87,6 @@ public class JwtUser implements UserDetails {
         this.grantedAuthorities = grantedAuthorities;
     }
 
-    public Collection<? extends GrantedAuthority> getGrantedAuthorities() {
-        return grantedAuthorities;
-    }
-
     @JsonIgnore
     public Long getId() {
         return id;

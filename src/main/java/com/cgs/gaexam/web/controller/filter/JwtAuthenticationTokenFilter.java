@@ -1,4 +1,4 @@
-package com.cgs.gaexam.filter;
+package com.cgs.gaexam.web.controller.filter;
 
 import com.cgs.gaexam.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;

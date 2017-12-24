@@ -27,7 +27,7 @@ public class UserRoleController {
     }
 
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable Integer id) {
+    public Result delete(@PathVariable Long id) {
         userRoleService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
@@ -39,7 +39,7 @@ public class UserRoleController {
     }
 
     @GetMapping("/{id}")
-    public Result detail(@PathVariable Integer id) {
+    public Result detail(@PathVariable Long id) {
         UserRole userRole = userRoleService.findById(id);
         return ResultGenerator.genSuccessResult(userRole);
     }

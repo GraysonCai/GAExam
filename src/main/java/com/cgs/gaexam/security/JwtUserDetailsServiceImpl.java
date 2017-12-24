@@ -16,12 +16,9 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private UserRoleService userRoleService;
-
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userService.findBy("username", s);
+        User user = userService.findByUsernameWithRoles(s);
         if (user == null) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", s));
         } else {

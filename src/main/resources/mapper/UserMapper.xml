@@ -36,7 +36,7 @@
     <result column="create_by" jdbcType="BIGINT" property="createBy"/>
     <result column="enabled" jdbcType="TINYINT" property="enabled"/>
     <collection property="roles" ofType="java.lang.String" javaType="java.util.List">
-      <result column="role_name"/>
+      <result column="authority"/>
     </collection>
   </resultMap>
 
@@ -51,9 +51,9 @@
     SELECT
       u.*,
       r.authority
-    FROM ga_user u, ga_user_role ur, ga_role r
-    WHERE u.id = ur.user_id
-          AND ur.role_id = r.id
-          AND u.username = #{username}
+    FROM ga_user u
+    LEFT JOIN ga_user_role ur ON u.id = ur.user_id
+    LEFT JOIN ga_role r ON ur.role_id = r.id
+    WHERE u.username = #{username}
   </select>
 </mapper>
