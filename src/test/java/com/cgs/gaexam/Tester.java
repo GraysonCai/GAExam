@@ -1,4 +1,4 @@
-package com.conpany.project;
+package com.cgs.gaexam;
 
 
 import com.cgs.gaexam.Application;

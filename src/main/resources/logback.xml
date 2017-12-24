@@ -15,8 +15,8 @@
             </encoder>
         </appender>
         <!--<logger name="cn.timebusker.util" level="debug" />-->
-        <logger name="com.cgs.gaexam" level="debug"/>
-        <root level="info">
+        <logger name="com.cgs.gaexam.web" level="debug"/>
+        <root level="debug">
             <appender-ref ref="CONSOLE"/>
         </root>
     </springProfile>
