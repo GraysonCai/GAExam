@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 文件输出格式 -->
-    <property name="PATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n"/>
+    <property name="PATTERNPATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n"/>
     <!-- test文件路径 -->
     <property name="TEST_FILE_PATH" value="logs/test.log"/>
     <!-- pro文件路径 -->
@@ -14,8 +14,13 @@
                 <pattern>%date [%thread] %-5level %logger{80} || %msg%n</pattern>
             </encoder>
         </appender>
-        <!--<logger name="cn.timebusker.util" level="debug" />-->
-        <logger name="com.cgs.gaexam.web" level="debug"/>
+
+        <logger name="com.cgs.gaexam" level="debug"/>
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.apache" level="WARN"/>
+        <logger name="org.mybatis.spring" level="WARN"/>
+        <logger name="springfox.documentation" level="WARN"/>
+
         <root level="debug">
             <appender-ref ref="CONSOLE"/>
         </root>

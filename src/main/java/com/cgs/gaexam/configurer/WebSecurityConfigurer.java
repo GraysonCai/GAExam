@@ -1,6 +1,6 @@
 package com.cgs.gaexam.configurer;
 
-import com.cgs.gaexam.web.controller.filter.JwtAuthenticationTokenFilter;
+import com.cgs.gaexam.web.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

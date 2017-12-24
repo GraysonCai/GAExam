@@ -1,4 +1,4 @@
-package com.cgs.gaexam.web.controller;
+package com.cgs.gaexam.web.controller.userrolemanage;
 
 import com.cgs.gaexam.core.Result;
 import com.cgs.gaexam.core.ResultGenerator;
