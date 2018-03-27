@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.ExamRoomMapper">
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.ExamRoom">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="seating" jdbcType="INTEGER" property="seating"/>
+        <result column="room_no" jdbcType="VARCHAR" property="roomNo"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+    </resultMap>
+</mapper>

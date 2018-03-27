@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.UserExamRecordMapper">
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.UserExamRecord">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="paper_id" jdbcType="BIGINT" property="paperId"/>
+        <result column="exam_id" jdbcType="BIGINT" property="examId"/>
+        <result column="exam_room_no" jdbcType="VARCHAR" property="examRoomNo"/>
+        <result column="exam_seat_no" jdbcType="INTEGER" property="examSeatNo"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="result" jdbcType="TINYINT" property="result"/>
+        <result column="subjective_score" jdbcType="INTEGER" property="subjectiveScore"/>
+        <result column="objective_score" jdbcType="INTEGER" property="objectiveScore"/>
+        <result column="begin_date" jdbcType="TIMESTAMP" property="beginDate"/>
+        <result column="finished_date" jdbcType="TIMESTAMP" property="finishedDate"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="answer_sheet" jdbcType="LONGVARCHAR" property="answerSheet"/>
+    </resultMap>
+
+    <resultMap id="ExamRecordInfoMap" type="com.cgs.gaexam.model.dto.UserExamRecordInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="paper_id" jdbcType="BIGINT" property="paperId"/>
+        <result column="exam_id" jdbcType="BIGINT" property="examId"/>
+        <result column="exam_room_no" jdbcType="VARCHAR" property="examRoomNo"/>
+        <result column="exam_seat_no" jdbcType="INTEGER" property="examSeatNo"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="result" jdbcType="TINYINT" property="result"/>
+        <result column="subjective_score" jdbcType="INTEGER" property="subjectiveScore"/>
+        <result column="objective_score" jdbcType="INTEGER" property="objectiveScore"/>
+        <result column="begin_date" jdbcType="TIMESTAMP" property="beginDate"/>
+        <result column="finished_date" jdbcType="TIMESTAMP" property="finishedDate"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="answer_sheet" jdbcType="LONGVARCHAR" property="answerSheet"/>
+
+        <!--显示额外字段-->
+        <result column="class_name" jdbcType="VARCHAR" property="className"/>
+        <result column="exam_name" jdbcType="VARCHAR" property="examName"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="start_date" jdbcType="VARCHAR" property="startDate"/>
+        <result column="end_date" jdbcType="VARCHAR" property="endDate"/>
+    </resultMap>
+
+    <select id="findAllExamRecordInfo" resultMap="ExamRecordInfoMap">
+        SELECT
+            uer.*,
+            u.name,
+            c.class_name
+        FROM ga_user_exam_record uer
+            JOIN ga_student s ON uer.user_id = s.user_id
+            JOIN ga_user u ON uer.user_id = u.id
+            JOIN ga_class c ON s.class_id = c.id
+        WHERE uer.exam_id = #{examId}
+        ORDER BY uer.exam_room_no, uer.exam_seat_no
+    </select>
+
+    <select id="findUserExamRecordInfo" resultMap="ExamRecordInfoMap">
+        SELECT
+            e.exam_name,
+            e.start_date,
+            e.end_date,
+            uer.exam_room_no,
+            uer.exam_seat_no,
+            uer.exam_id,
+            c.course_name
+        FROM
+            `ga_user_exam_record` uer
+            JOIN ga_exam e ON uer.exam_id = e.id
+            JOIN ga_paper p ON e.paper_id = p.id
+            JOIN ga_course c ON p.course_id = c.id
+        WHERE uer.user_id = #{userId}
+              AND e.end_date >= CURRENT_TIMESTAMP
+              AND e.`status` IN (0, 1);
+    </select>
+
+
+</mapper>

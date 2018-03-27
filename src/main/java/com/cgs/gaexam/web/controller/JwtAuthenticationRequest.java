@@ -1,4 +1,4 @@
-package com.cgs.gaexam.web.controller.auth;
+package com.cgs.gaexam.web.controller;
 
 public class JwtAuthenticationRequest {
     private String username;

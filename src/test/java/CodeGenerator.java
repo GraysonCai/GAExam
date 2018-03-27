@@ -44,7 +44,7 @@ public class CodeGenerator {
 
     public static void main(String[] args) {
         //genCode("user");
-        genCodeByCustomModelName("ga_user_role", "UserRole");
+        genCodeByCustomModelName("ga_user_exam_record", "UserExamRecord");
     }
 
     /**

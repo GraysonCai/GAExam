@@ -305,6 +305,10 @@ public class User {
     public User() {
     }
 
+    public User(String username) {
+        this.username = username;
+    }
+
     public User(Long id, String username, String password, String name, Byte sex, Byte age, Long phone, String email, Date lastPasswordResetDate, Date createDate, Long createBy, Byte enabled, List<String> roles) {
         this.id = id;
         this.username = username;
@@ -339,4 +343,39 @@ public class User {
                 ", roles=" + roles +
                 '}';
     }
+
+    public User(String username, String password, String name, Date createDate, Long createBy, Byte enabled) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.createDate = createDate;
+        this.createBy = createBy;
+        this.enabled = enabled;
+    }
+
+    //新增学生构造函数
+    public User(String username, String password, String name, Byte sex, Byte age, Long phone, String email, Date createDate, Long createBy, Byte enabled) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.sex = sex;
+        this.age = age;
+        this.phone = phone;
+        this.email = email;
+        this.createDate = createDate;
+        this.createBy = createBy;
+        this.enabled = enabled;
+    }
+
+    //更新学生所用构造函数
+    public User(Long id, String name, Byte sex, Byte age, Long phone, String email, Byte enabled) {
+        this.id = id;
+        this.name = name;
+        this.sex = sex;
+        this.age = age;
+        this.phone = phone;
+        this.email = email;
+        this.enabled = enabled;
+    }
+
 }

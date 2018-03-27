@@ -1,59 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cgs.gaexam.dao.UserMapper">
-  <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.User">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="BIGINT" property="id"/>
-    <result column="username" jdbcType="VARCHAR" property="username"/>
-    <result column="password" jdbcType="VARCHAR" property="password"/>
-    <result column="name" jdbcType="VARCHAR" property="name"/>
-    <result column="sex" jdbcType="TINYINT" property="sex"/>
-    <result column="age" jdbcType="TINYINT" property="age"/>
-    <result column="phone" jdbcType="BIGINT" property="phone"/>
-    <result column="email" jdbcType="VARCHAR" property="email"/>
-    <result column="last_password_reset_date" jdbcType="TIMESTAMP" property="lastPasswordResetDate"/>
-    <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
-    <result column="create_by" jdbcType="BIGINT" property="createBy"/>
-    <result column="enabled" jdbcType="TINYINT" property="enabled"/>
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="sex" jdbcType="TINYINT" property="sex"/>
+        <result column="age" jdbcType="TINYINT" property="age"/>
+        <result column="phone" jdbcType="BIGINT" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="last_password_reset_date" jdbcType="TIMESTAMP" property="lastPasswordResetDate"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="enabled" jdbcType="TINYINT" property="enabled"/>
+    </resultMap>
 
-  <resultMap id="ExtRolesResultMap" type="com.cgs.gaexam.model.User">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="BIGINT" property="id"/>
-    <result column="username" jdbcType="VARCHAR" property="username"/>
-    <result column="password" jdbcType="VARCHAR" property="password"/>
-    <result column="name" jdbcType="VARCHAR" property="name"/>
-    <result column="sex" jdbcType="TINYINT" property="sex"/>
-    <result column="age" jdbcType="TINYINT" property="age"/>
-    <result column="phone" jdbcType="BIGINT" property="phone"/>
-    <result column="email" jdbcType="VARCHAR" property="email"/>
-    <result column="last_password_reset_date" jdbcType="TIMESTAMP" property="lastPasswordResetDate"/>
-    <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
-    <result column="create_by" jdbcType="BIGINT" property="createBy"/>
-    <result column="enabled" jdbcType="TINYINT" property="enabled"/>
-    <collection property="roles" ofType="java.lang.String" javaType="java.util.List">
-      <result column="authority"/>
-    </collection>
-  </resultMap>
+    <resultMap id="ExtRolesResultMap" type="com.cgs.gaexam.model.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="sex" jdbcType="TINYINT" property="sex"/>
+        <result column="age" jdbcType="TINYINT" property="age"/>
+        <result column="phone" jdbcType="BIGINT" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="last_password_reset_date" jdbcType="TIMESTAMP" property="lastPasswordResetDate"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="enabled" jdbcType="TINYINT" property="enabled"/>
+        <collection property="roles" ofType="java.lang.String" javaType="java.util.List">
+            <result column="authority"/>
+        </collection>
+    </resultMap>
 
 
-  <select id="findByUsername" resultMap="BaseResultMap">
-    SELECT *
-    FROM ga_user
-    WHERE username = #{username}
-  </select>
+    <select id="findByUsername" resultMap="BaseResultMap">
+        SELECT *
+        FROM ga_user
+        WHERE username = #{username}
+    </select>
 
-  <select id="findByUsernameWithRoles" resultMap="ExtRolesResultMap">
-    SELECT
-      u.*,
-      r.authority
-    FROM ga_user u
-    LEFT JOIN ga_user_role ur ON u.id = ur.user_id
-    LEFT JOIN ga_role r ON ur.role_id = r.id
-    WHERE u.username = #{username}
-  </select>
+    <select id="findByUsernameWithRoles" resultMap="ExtRolesResultMap">
+        SELECT
+            u.*,
+            r.authority
+        FROM ga_user u
+            LEFT JOIN ga_user_role ur ON u.id = ur.user_id
+            LEFT JOIN ga_role r ON ur.role_id = r.id
+        WHERE u.username = #{username}
+    </select>
+
+
+    <update id="updateUserById">
+        UPDATE ga_user
+
+        <set>
+            <trim suffixOverrides=",">
+                <if test="u.password != null">
+                    password = #{u.password},
+                </if>
+                <if test="u.name != null">
+                    name = #{u.name},
+                </if>
+                <if test="u.sex != null">
+                    sex = #{u.sex},
+                </if>
+                <if test="u.age != null">
+                    age = #{u.age},
+                </if>
+                <if test="u.email != null">
+                    email = #{u.email},
+                </if>
+                <if test="u.phone != null">
+                    phone = #{u.phone},
+                </if>
+                <if test="u.lastPasswordResetDate != null">
+                    last_password_reset_date = #{u.lastPasswordResetDate},
+                </if>
+                <if test="u.enabled != null">
+                    enabled = #{u.enabled},
+                </if>
+            </trim>
+            <where>
+                <if test="u.id != null">
+                    id = #{u.id}
+                </if>
+            </where>
+        </set>
+    </update>
+
+    <select id="existUser" resultType="boolean">
+        SELECT count(1)
+        FROM ga_user
+        WHERE id = #{userId}
+    </select>
 </mapper>

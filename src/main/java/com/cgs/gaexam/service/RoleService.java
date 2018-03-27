@@ -2,6 +2,9 @@ package com.cgs.gaexam.service;
 
 import com.cgs.gaexam.model.Role;
 import com.cgs.gaexam.core.Service;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 
 /**
@@ -9,4 +12,5 @@ import com.cgs.gaexam.core.Service;
  */
 public interface RoleService extends Service<Role> {
 
+    List<Role> findRolesByUserId(@Param("userId") Long userId);
 }

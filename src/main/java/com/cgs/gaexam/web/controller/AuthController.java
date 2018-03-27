@@ -1,8 +1,9 @@
-package com.cgs.gaexam.web.controller.auth;
+package com.cgs.gaexam.web.controller;
 
 import com.cgs.gaexam.core.Result;
 import com.cgs.gaexam.core.ResultGenerator;
 import com.cgs.gaexam.model.User;
+import com.cgs.gaexam.model.dto.LoginUser;
 import com.cgs.gaexam.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +27,9 @@ public class AuthController {
     public Result createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
         System.err.println(authenticationRequest.getUsername() + authenticationRequest.getPassword());
-        final String token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        LoginUser lg = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         // Return the token
-        return ResultGenerator.genSuccessResult(token);
+        return ResultGenerator.genSuccessResult(lg);
     }
 
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)

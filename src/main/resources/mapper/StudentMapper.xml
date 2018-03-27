@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.StudentMapper">
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.Student">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="grade" jdbcType="VARCHAR" property="grade"/>
+        <result column="class_id" jdbcType="BIGINT" property="classId"/>
+        <result column="academy_id" jdbcType="BIGINT" property="academyId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+    </resultMap>
+
+    <resultMap id="StudentInfoResultMap" type="com.cgs.gaexam.model.dto.StudentInfo">
+        <id column="student_id" property="studentId"/>
+        <result column="user_id" property="userId"/>
+        <result column="academy_name" property="academy"/>
+        <result column="academy_id" property="academyId"/>
+        <result column="grade" property="grade"/>
+        <result column="class_name" property="className"/>
+        <result column="class_id" property="classId"/>
+        <result column="username" property="username"/>
+        <result column="name" property="name"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="enabled" property="enabled"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="StudentInfoResultMap">
+        SELECT
+            a.id AS academy_id,
+            a.academy_name,
+            s.grade,
+            s.id AS student_id,
+            c.id AS class_id,
+            c.class_name,
+            u.id AS user_id,
+            u.username,
+            u.NAME,
+            u.sex,
+            u.age,
+            u.phone,
+            u.email,
+            u.enabled,
+            u.create_date
+        FROM
+            ga_user u,
+            ga_student s,
+            ga_academy a,
+            ga_class c
+        WHERE
+            u.id = s.user_id
+            AND a.id = s.academy_id
+            AND c.id = s.class_id
+        ORDER BY u.create_date DESC
+    </select>
+
+    <delete id="deleteByUserId">
+        DELETE FROM ga_student
+        WHERE user_id = #{userId}
+    </delete>
+
+    <select id="findByUserId" resultMap="StudentInfoResultMap">
+        SELECT
+            a.id AS academy_id,
+            a.academy_name,
+            s.grade,
+            s.id AS student_id,
+            c.id AS class_id,
+            c.class_name,
+            u.id AS user_id,
+            u.username,
+            u.NAME,
+            u.sex,
+            u.age,
+            u.phone,
+            u.email,
+            u.enabled,
+            u.create_date
+        FROM
+            ga_user u,
+            ga_student s,
+            ga_academy a,
+            ga_class c
+        WHERE
+            u.id = #{userId}
+            AND u.id = s.user_id
+            AND a.id = s.academy_id
+            AND c.id = s.class_id
+    </select>
+
+    <update id="updateStudentById">
+        UPDATE ga_student
+        <set>
+            <trim suffixOverrides=",">
+                <if test="s.classId != null">
+                    class_id = #{s.classId},
+                </if>
+                <if test="s.academyId != null">
+                    academy_id = #{s.academyId},
+                </if>
+                <if test="s.grade != null">
+                    grade = #{s.grade},
+                </if>
+            </trim>
+            WHERE 1 = 1
+            <if test="s.id != null">
+                AND id = #{s.id}
+            </if>
+        </set>
+    </update>
+
+    <select id="existStudent" resultType="boolean">
+        SELECT count(1)
+        FROM ga_student
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>

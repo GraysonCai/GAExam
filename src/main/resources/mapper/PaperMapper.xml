@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.PaperMapper">
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.Paper">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
+        <result column="question_ids" jdbcType="VARCHAR" property="questionIds"/>
+        <result column="duration" jdbcType="INTEGER" property="duration"/>
+        <result column="pass_score" jdbcType="REAL" property="passScore"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="subjective" jdbcType="TINYINT" property="subjective"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="difficulty" jdbcType="REAL" property="difficulty"/>
+        <result column="adaptation_degree" jdbcType="REAL" property="adaptationDegree"/>
+        <result column="course_id" jdbcType="BIGINT" property="courseId"/>
+        <result column="rule_id" jdbcType="BIGINT" property="ruleId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="knowledge_ids" jdbcType="VARCHAR" property="knowledgeIds"/>
+        <result column="knowledge_coverage" jdbcType="VARCHAR" property="knowledgeCoverage"/>
+    </resultMap>
+
+    <resultMap id="PaperInfoMap" type="com.cgs.gaexam.model.dto.PaperInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
+        <result column="question_ids" jdbcType="VARCHAR" property="questionIds"/>
+        <result column="duration" jdbcType="INTEGER" property="duration"/>
+        <result column="pass_score" jdbcType="REAL" property="passScore"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="subjective" jdbcType="TINYINT" property="subjective"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="difficulty" jdbcType="REAL" property="difficulty"/>
+        <result column="adaptation_degree" jdbcType="REAL" property="adaptationDegree"/>
+        <result column="course_id" jdbcType="BIGINT" property="courseId"/>
+        <result column="rule_id" jdbcType="BIGINT" property="ruleId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="knowledge_ids" jdbcType="VARCHAR" property="knowledgeIds"/>
+        <result column="knowledge_coverage" jdbcType="VARCHAR" property="knowledgeCoverage"/>
+        <!-- 额外属性 -->
+        <result column="courseName" jdbcType="VARCHAR" property="courseName"/>
+        <result column="ruleType" jdbcType="TINYINT" property="ruleType"/>
+        <result column="createUser" jdbcType="VARCHAR" property="createUser"/>
+    </resultMap>
+
+
+    <select id="findAllPaperInfo" resultMap="PaperInfoMap">
+        SELECT
+            p.*,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = p.course_id) AS courseName,
+            (SELECT u.name
+             FROM ga_user u
+             WHERE u.id = p.create_by) AS createUser,
+            (SELECT r.rule_type
+             FROM ga_rule r
+             WHERE r.id = p.rule_id)   AS ruleType
+        FROM ga_paper p
+        ORDER BY p.create_date DESC
+    </select>
+
+    <select id="getPaperInfoById" resultMap="PaperInfoMap">
+        SELECT
+            p.*,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = p.course_id) AS courseName,
+            (SELECT u.name
+             FROM ga_user u
+             WHERE u.id = p.create_by) AS createUser
+        FROM ga_paper p
+        WHERE p.id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.ExamMapper">
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.Exam">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="exam_name" jdbcType="VARCHAR" property="examName"/>
+        <result column="paper_id" jdbcType="BIGINT" property="paperId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="start_date" jdbcType="TIMESTAMP" property="startDate"/>
+        <result column="end_date" jdbcType="TIMESTAMP" property="endDate"/>
+        <result column="exam_room_ids" jdbcType="VARCHAR" property="examRoomIds"/>
+        <result column="exam_classes" jdbcType="VARCHAR" property="examClasses"/>
+        <result column="total_exam_number" jdbcType="INTEGER" property="totalExamNumber"/>
+        <result column="exam_room_capacity" jdbcType="INTEGER" property="examRoomCapacity"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+    </resultMap>
+
+    <resultMap id="ExamInfoMap" type="com.cgs.gaexam.model.dto.ExamInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="exam_name" jdbcType="VARCHAR" property="examName"/>
+        <result column="paper_id" jdbcType="BIGINT" property="paperId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="start_date" jdbcType="TIMESTAMP" property="startDate"/>
+        <result column="end_date" jdbcType="TIMESTAMP" property="endDate"/>
+        <result column="exam_room_ids" jdbcType="VARCHAR" property="examRoomIds"/>
+        <result column="exam_classes" jdbcType="VARCHAR" property="examClasses"/>
+        <result column="total_exam_number" jdbcType="INTEGER" property="totalExamNumber"/>
+        <result column="exam_room_capacity" jdbcType="INTEGER" property="examRoomCapacity"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <!-- 数据传输需要 -->
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
+        <result column="pass_score" jdbcType="INTEGER" property="passScore"/>
+        <result column="total_score" jdbcType="INTEGER" property="totalScore"/>
+        <result column="duration" jdbcType="INTEGER" property="duration"/>
+    </resultMap>
+
+    <select id="findAllExamInfo" resultMap="ExamInfoMap">
+        SELECT
+            e.*,
+            (SELECT u.name
+             FROM ga_user u
+             WHERE u.id = e.create_by) AS create_user,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = p.course_id) AS course_name,
+            p.paper_name,
+            p.pass_score
+        FROM ga_exam e
+            JOIN ga_paper p
+                ON e.paper_id = p.id
+        ORDER BY e.create_date DESC
+    </select>
+
+    <select id="getExamInfoById" resultMap="ExamInfoMap">
+        SELECT
+            e.*,
+            (SELECT u.name
+             FROM ga_user u
+             WHERE u.id = e.create_by) AS create_user,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = p.course_id) AS course_name,
+            p.paper_name,
+            p.pass_score,
+            p.duration,
+            r.total_score
+        FROM ga_exam e
+            JOIN ga_paper p ON e.paper_id = p.id
+            JOIN ga_rule r ON p.rule_id = r.id
+        WHERE e.id = #{examId}
+    </select>
+
+</mapper>

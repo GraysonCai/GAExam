@@ -19,6 +19,7 @@
         <logger name="org.springframework" level="WARN"/>
         <logger name="org.apache" level="WARN"/>
         <logger name="org.mybatis.spring" level="WARN"/>
+        <logger name="org.springframework.security" level="WARN"/>
         <logger name="springfox.documentation" level="WARN"/>
 
         <root level="debug">

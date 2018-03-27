@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.QuestionMapper">
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.Question">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="stem" jdbcType="VARCHAR" property="stem"/>
+        <result column="question_type_id" jdbcType="BIGINT" property="questionTypeId"/>
+        <result column="course_id" jdbcType="BIGINT" property="courseId"/>
+        <result column="knowledge_ids" jdbcType="VARCHAR" property="knowledgeIds"/>
+        <result column="difficulty" jdbcType="REAL" property="difficulty"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+        <result column="answer" jdbcType="LONGVARCHAR" property="answer"/>
+        <result column="analysis" jdbcType="LONGVARCHAR" property="analysis"/>
+    </resultMap>
+
+    <resultMap id="QuestionInfoMap" type="com.cgs.gaexam.model.dto.QuestionInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="stem" jdbcType="VARCHAR" property="stem"/>
+        <result column="question_type_id" jdbcType="BIGINT" property="questionTypeId"/>
+        <result column="course_id" jdbcType="BIGINT" property="courseId"/>
+        <result column="knowledge_ids" jdbcType="VARCHAR" property="knowledgeIds"/>
+        <result column="difficulty" jdbcType="REAL" property="difficulty"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+        <result column="answer" jdbcType="LONGVARCHAR" property="answer"/>
+        <result column="analysis" jdbcType="LONGVARCHAR" property="analysis"/>
+        <!--额外属性-->
+        <result column="typeName" jdbcType="VARCHAR" property="typeName"/>
+        <result column="courseName" jdbcType="VARCHAR" property="courseName"/>
+        <result column="knowledgeIdsName" jdbcType="VARCHAR" property="knowledgeIdsName"/>
+        <result column="createUser" jdbcType="VARCHAR" property="createUser"/>
+    </resultMap>
+
+    <select id="findAllQuestionInfo" resultMap="QuestionInfoMap">
+        SELECT
+            q.*,
+            (SELECT t.type_name
+             FROM ga_question_type t
+             WHERE t.id = q.question_type_id)              AS typeName,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = q.course_id)                     AS courseName,
+            (SELECT u.name
+             FROM ga_user u
+             WHERE u.id = q.create_by)                     AS createUser,
+            (SELECT group_concat(k.knowledge_name)
+             FROM ga_knowledge k
+             WHERE FIND_IN_SET(k.id, q.knowledge_ids) > 0) AS knowledgeIdsName
+        FROM ga_question q
+        ORDER BY q.create_date DESC
+    </select>
+
+    <select id="findQuestionInfoByIds" resultMap="QuestionInfoMap">
+        SELECT
+        q.*,
+        (SELECT t.type_name FROM ga_question_type t WHERE t.id = q.question_type_id) AS typeName,
+        (SELECT c.course_name FROM ga_course c WHERE c.id = q.course_id) AS courseName,
+        (SELECT u.name FROM ga_user u WHERE u.id = q.create_by) AS createUser,
+        ( SELECT group_concat(k.knowledge_name) FROM ga_knowledge k WHERE FIND_IN_SET(k.id, q.knowledge_ids) > 0 ) AS
+        knowledgeIdsName
+        FROM ga_question q
+        WHERE q.id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        ORDER BY q.question_type_id ASC,q.id ASC
+    </select>
+
+    <select id="findTestQuestionInfoByIds" resultMap="QuestionInfoMap">
+        SELECT
+        q.id,
+        q.stem,
+        q.content,
+        q.question_type_id
+        FROM ga_question q
+        WHERE q.id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        ORDER BY q.question_type_id ASC,q.id ASC
+    </select>
+
+    <select id="getQuestionInfoById" resultMap="QuestionInfoMap">
+        SELECT
+            q.*,
+            t.type_name                                    AS typeName,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = q.course_id)                     AS courseName,
+            (SELECT u.name
+             FROM ga_user u
+             WHERE u.id = q.create_by)                     AS createUser,
+            (SELECT group_concat(k.knowledge_name)
+             FROM ga_knowledge k
+             WHERE FIND_IN_SET(k.id, q.knowledge_ids) > 0) AS knowledgeIdsName
+        FROM ga_question q
+            JOIN ga_question_type t ON t.id = q.question_type_id
+        WHERE q.id = #{id}
+        ORDER BY q.create_date DESC
+    </select>
+
+    <select id="find" resultMap="QuestionInfoMap">
+        SELECT
+            q.*,
+            (SELECT t.type_name
+             FROM ga_question_type t
+             WHERE t.id = q.question_type_id)              AS typeName,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = q.course_id)                     AS courseName,
+            (SELECT u.name
+             FROM ga_user u
+             WHERE u.id = q.create_by)                     AS createUser,
+            (SELECT group_concat(k.knowledge_name)
+             FROM ga_knowledge k
+             WHERE FIND_IN_SET(k.id, q.knowledge_ids) > 0) AS knowledgeIdsName
+        FROM ga_question q
+        WHERE q.question_type_id = #{typeId}
+              AND q.course_id = #{courseId}
+              AND INTE_ARRAY(#{knowledgeIds}, q.knowledge_ids) > 0
+    </select>
+
+    <select id="findExcludeQuestion" resultMap="QuestionInfoMap">
+        SELECT
+            q.*,
+            (SELECT t.type_name
+             FROM ga_question_type t
+             WHERE t.id = q.question_type_id)              AS typeName,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = q.course_id)                     AS courseName,
+            (SELECT u.name
+             FROM ga_user u
+             WHERE u.id = q.create_by)                     AS createUser,
+            (SELECT group_concat(k.knowledge_name)
+             FROM ga_knowledge k
+             WHERE FIND_IN_SET(k.id, q.knowledge_ids) > 0) AS knowledgeIdsName
+        FROM ga_question q
+        WHERE q.id NOT IN (#{id})
+              AND q.question_type_id = #{typeId}
+              AND q.course_id = #{courseId}
+              AND INTE_ARRAY(#{knowledgeIds}, q.knowledge_ids) > 0
+    </select>
+
+</mapper>

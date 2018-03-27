@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -20,4 +21,8 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     @Autowired
     private RoleMapper gaRoleMapper;
 
+    @Override
+    public List<Role> findRolesByUserId(Long userId) {
+        return gaRoleMapper.findRolesByUserId(userId);
+    }
 }

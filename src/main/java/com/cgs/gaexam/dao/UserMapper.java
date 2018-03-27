@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("userMapper")
+@Repository
 public interface UserMapper extends Mapper<User> {
     /**
      * 通过用户名查询用户
@@ -17,13 +17,7 @@ public interface UserMapper extends Mapper<User> {
      */
     User findByUsername(@Param("username") String username);
 
-    /**
-     * 通过用户id查询权限列表
-     *
-     * @param userId
-     * @return
-     */
-    List<String> getRolesByUserId(@Param("userId") Long userId);
+
 
     /**
      * 通过用户名查询用户，带上权限
@@ -32,4 +26,20 @@ public interface UserMapper extends Mapper<User> {
      * @return
      */
     User findByUsernameWithRoles(@Param("username") String username);
+
+    /**
+     * 通过用户的id更新各个字段，排除为null的情况
+     *
+     * @param user
+     * @return
+     */
+    int updateUserById(@Param("u") User user);
+
+    /**
+     * 判断是否存在用户
+     *
+     * @param userId
+     * @return
+     */
+    boolean existUser(@Param("userId") Long userId);
 }

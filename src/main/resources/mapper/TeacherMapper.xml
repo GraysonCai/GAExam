@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.TeacherMapper">
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.Teacher">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="academy_id" jdbcType="BIGINT" property="academyId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+    </resultMap>
+
+    <resultMap id="TeacherInfoResultMap" type="com.cgs.gaexam.model.dto.TeacherInfo">
+        <id column="teacher_id" property="teacherId"/>
+        <result column="user_id" property="userId"/>
+        <result column="academy_name" property="academy"/>
+        <result column="academy_id" property="academyId"/>
+        <result column="username" property="username"/>
+        <result column="name" property="name"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="enabled" property="enabled"/>
+        <result column="create_date" property="createDate"/>
+        <result column="title" property="title"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="TeacherInfoResultMap">
+        SELECT
+            a.id AS academy_id,
+            a.academy_name,
+            t.title,
+            t.id AS teacher_id,
+            u.id AS user_id,
+            u.username,
+            u.NAME,
+            u.sex,
+            u.age,
+            u.phone,
+            u.email,
+            u.enabled,
+            u.create_date
+        FROM
+            ga_user u,
+            ga_teacher t,
+            ga_academy a
+        WHERE
+            u.id = t.user_id
+            AND a.id = t.academy_id
+        ORDER BY u.create_date DESC
+    </select>
+
+    <delete id="deleteByUserId">
+        DELETE FROM ga_teacher
+        WHERE user_id = #{userId}
+    </delete>
+
+    <select id="findByUserId" resultMap="TeacherInfoResultMap">
+        SELECT
+            a.id AS academy_id,
+            a.academy_name,
+            t.title,
+            t.id AS teacher_id,
+            u.id AS user_id,
+            u.username,
+            u.NAME,
+            u.sex,
+            u.age,
+            u.phone,
+            u.email,
+            u.enabled,
+            u.create_date
+        FROM
+            ga_user u,
+            ga_teacher t,
+            ga_academy a
+        WHERE
+            u.id = #{userId}
+            AND u.id = t.user_id
+            AND a.id = t.academy_id
+    </select>
+
+    <update id="updateTeacherById">
+        UPDATE ga_teacher
+        <set>
+            <trim suffixOverrides=",">
+                <if test="t.academyId != null">
+                    academy_id = #{t.academyId},
+                </if>
+                <if test="t.title != null">
+                    title = #{t.title},
+                </if>
+            </trim>
+            WHERE 1 = 1
+            <if test="t.id != null">
+                AND id = #{t.id}
+            </if>
+        </set>
+    </update>
+
+    <select id="existTeacher" resultType="boolean">
+        SELECT count(1)
+        FROM ga_teacher
+        WHERE user_id = #{userId}
+    </select>
+</mapper>

@@ -1,4 +1,4 @@
-package com.cgs.gaexam.web.controller.userrolemanage;
+package com.cgs.gaexam.web.controller;
 
 import com.cgs.gaexam.core.Result;
 import com.cgs.gaexam.core.ResultGenerator;
@@ -41,8 +41,7 @@ public class UserController {
 
     @PutMapping
     public Result update(@RequestBody User user) {
-        userService.update(user);
-        return ResultGenerator.genSuccessResult();
+        return ResultGenerator.genSuccessResult(userService.updateUserById(user));
     }
 
     @GetMapping("/{id}")
@@ -59,4 +58,15 @@ public class UserController {
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
+
+    @GetMapping("settings/{userId}")
+    public Result settings(@PathVariable Long userId) {
+        return ResultGenerator.genSuccessResult(userService.getSelfInfo(userId));
+    }
+
+    @PutMapping("password")
+    public Result resetPassword(@RequestBody User user) {
+        return ResultGenerator.genSuccessResult(userService.resetPassword(user));
+    }
+
 }

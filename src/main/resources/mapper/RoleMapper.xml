@@ -11,4 +11,14 @@
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="create_by" jdbcType="BIGINT" property="createBy"/>
     </resultMap>
+
+    <select id="findRolesByUserId" resultMap="BaseResultMap">
+        SELECT *
+        FROM ga_role
+        WHERE id IN (
+            SELECT role_id
+            FROM ga_role_menu
+            WHERE user_id = #{userId}
+        )
+    </select>
 </mapper>
