@@ -47,6 +47,12 @@ public class QuestionController {
         return ResultGenerator.genSuccessResult(questionInfo);
     }
 
+    @GetMapping("/detail/{questionRecordId}")
+    public Result detailWrongQuestion(@PathVariable Long questionRecordId) {
+        QuestionInfo questionInfo = questionService.getQuestionDetailById(questionRecordId);
+        return ResultGenerator.genSuccessResult(questionInfo);
+    }
+
     @GetMapping
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);

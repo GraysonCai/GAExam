@@ -80,4 +80,21 @@
         WHERE e.id = #{examId}
     </select>
 
+    <select id="findFinishedExam" resultMap="BaseResultMap">
+        SELECT
+            id,
+            exam_name
+        FROM
+            ga_exam
+        WHERE
+            id IN (
+                SELECT exam_id
+                FROM
+                    ga_user_exam_record
+                WHERE
+                    user_id = #{userId}
+                    AND STATUS = 4
+            )
+    </select>
+
 </mapper>

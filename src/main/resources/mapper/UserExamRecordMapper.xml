@@ -13,13 +13,23 @@
         <result column="exam_seat_no" jdbcType="INTEGER" property="examSeatNo"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="result" jdbcType="TINYINT" property="result"/>
-        <result column="subjective_score" jdbcType="INTEGER" property="subjectiveScore"/>
-        <result column="objective_score" jdbcType="INTEGER" property="objectiveScore"/>
+        <result column="subjective_score" jdbcType="REAL" property="subjectiveScore"/>
+        <result column="objective_score" jdbcType="REAL" property="objectiveScore"/>
         <result column="begin_date" jdbcType="TIMESTAMP" property="beginDate"/>
         <result column="finished_date" jdbcType="TIMESTAMP" property="finishedDate"/>
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="create_by" jdbcType="BIGINT" property="createBy"/>
         <result column="answer_sheet" jdbcType="LONGVARCHAR" property="answerSheet"/>
+    </resultMap>
+
+    <resultMap id="BarChartDataMap" type="com.cgs.gaexam.model.dto.Data">
+        <result column="exam_name" javaType="String" jdbcType="VARCHAR" property="name"/>
+        <result column="gain_score" javaType="float" jdbcType="REAL" property="value"/>
+    </resultMap>
+
+    <resultMap id="LineChartDataMap" type="com.cgs.gaexam.model.dto.Data">
+        <result column="exam_name" javaType="String" jdbcType="VARCHAR" property="name"/>
+        <result column="rank" javaType="int" jdbcType="INTEGER" property="value"/>
     </resultMap>
 
     <resultMap id="ExamRecordInfoMap" type="com.cgs.gaexam.model.dto.UserExamRecordInfo">
@@ -34,8 +44,8 @@
         <result column="exam_seat_no" jdbcType="INTEGER" property="examSeatNo"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="result" jdbcType="TINYINT" property="result"/>
-        <result column="subjective_score" jdbcType="INTEGER" property="subjectiveScore"/>
-        <result column="objective_score" jdbcType="INTEGER" property="objectiveScore"/>
+        <result column="subjective_score" jdbcType="REAL" property="subjectiveScore"/>
+        <result column="objective_score" jdbcType="REAL" property="objectiveScore"/>
         <result column="begin_date" jdbcType="TIMESTAMP" property="beginDate"/>
         <result column="finished_date" jdbcType="TIMESTAMP" property="finishedDate"/>
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
@@ -48,19 +58,41 @@
         <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
         <result column="start_date" jdbcType="VARCHAR" property="startDate"/>
         <result column="end_date" jdbcType="VARCHAR" property="endDate"/>
+        <result column="paper_score" jdbcType="REAL" property="paperScore"/>
+        <result column="total_score" jdbcType="REAL" property="totalScore"/>
+        <result column="pass_score" jdbcType="REAL" property="passScore"/>
+        <result column="teacher" jdbcType="VARCHAR" property="teacher"/>
+        <result column="duration" jdbcType="INTEGER" property="duration"/>
+        <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
     </resultMap>
 
     <select id="findAllExamRecordInfo" resultMap="ExamRecordInfoMap">
         SELECT
             uer.*,
             u.name,
-            c.class_name
+            c.class_name,
+            (uer.subjective_score + uer.objective_score) AS total_score
         FROM ga_user_exam_record uer
             JOIN ga_student s ON uer.user_id = s.user_id
             JOIN ga_user u ON uer.user_id = u.id
             JOIN ga_class c ON s.class_id = c.id
         WHERE uer.exam_id = #{examId}
         ORDER BY uer.exam_room_no, uer.exam_seat_no
+    </select>
+
+    <select id="findWaitToReadPaperByUser" resultMap="ExamRecordInfoMap">
+        SELECT
+            uer.id AS id,
+            c.course_name,
+            uer.begin_date,
+            uer.finished_date
+        FROM
+            ga_teacher t
+            JOIN ga_course c ON t.id = c.teacher_id
+            JOIN ga_paper p ON c.id = p.course_id
+            JOIN ga_exam e ON p.id = e.paper_id AND e.`status` IN (1, 2)
+            JOIN ga_user_exam_record uer ON uer.exam_id = e.id AND uer.`status` = 3
+        WHERE t.user_id = #{userId}
     </select>
 
     <select id="findUserExamRecordInfo" resultMap="ExamRecordInfoMap">
@@ -78,9 +110,155 @@
             JOIN ga_paper p ON e.paper_id = p.id
             JOIN ga_course c ON p.course_id = c.id
         WHERE uer.user_id = #{userId}
-              AND e.end_date >= CURRENT_TIMESTAMP
-              AND e.`status` IN (0, 1);
+              AND e.end_date >= CURRENT_TIMESTAMP # 同时考试结束时间大于当前时间
+              AND e.`status` IN (0, 1) # 考试状态 0未开始->1进行中
+              AND uer.status IN (0, 1, 2) # 用户考试状态 0等待考试，1考试进行中，2考试中途退出,
     </select>
 
+    <select id="findUserHistoryExamRecordInfo" resultMap="ExamRecordInfoMap">
+        SELECT
+            uer.id,
+            e.exam_name,
+            c.course_name,
+            r.total_score                                AS paper_score,
+            p.pass_score,
+            (uer.subjective_score + uer.objective_score) AS total_score,
+            uer.status,
+            uer.result
+        FROM
+            `ga_user_exam_record` uer
+            JOIN ga_exam e ON uer.exam_id = e.id
+            JOIN ga_paper p ON e.paper_id = p.id
+            JOIN ga_rule r ON p.rule_id = r.id
+            JOIN ga_course c ON p.course_id = c.id
+        WHERE uer.user_id = #{userId}
+              AND (e.end_date &lt; CURRENT_TIMESTAMP
+                   OR uer.status IN (3, 4)) # 3阅卷中， 4考试完成
+    </select>
+
+    <select id="getUserHistoryExamRecordDetailInfo" resultMap="ExamRecordInfoMap">
+        SELECT
+            uer.*,
+            e.exam_name,
+            e.start_date,
+            e.end_date,
+            c.course_name,
+            r.total_score                                AS paper_score,
+            p.pass_score,
+            p.duration,
+            p.paper_name,
+            (uer.subjective_score + uer.objective_score) AS total_score
+        FROM
+            `ga_user_exam_record` uer
+            JOIN ga_exam e ON uer.exam_id = e.id
+            JOIN ga_paper p ON e.paper_id = p.id
+            JOIN ga_rule r ON p.rule_id = r.id
+            JOIN ga_course c ON p.course_id = c.id
+                                AND uer.id = #{recordId}
+                                AND (e.end_date &lt; CURRENT_TIMESTAMP
+                                     OR uer.status IN (3, 4)) # 3阅卷中， 4考试完成
+    </select>
+
+    <select id="findUserClassExamSituation" resultMap="ExamRecordInfoMap">
+        SELECT
+            uer.user_id,
+            uer.exam_id,
+            uer.STATUS,
+            (subjective + objective_score) AS total_score,
+            p.pass_score,
+            r.total_score                  AS paper_score,
+            e.exam_name,
+            (
+                SELECT class_name
+                FROM
+                    ga_class
+                WHERE
+                    id = (
+                        SELECT class_id
+                        FROM
+                            ga_student
+                        WHERE
+                            user_id = #{userId}
+                    )
+            )                              AS class_name
+        FROM
+            ga_user_exam_record uer
+            JOIN ga_paper p ON p.id = uer.paper_id
+            JOIN ga_rule r ON p.rule_id = r.id
+            JOIN ga_exam e ON uer.exam_id = e.id
+        WHERE
+            uer.user_id IN (
+                SELECT user_id
+                FROM
+                    ga_student
+                WHERE
+                    class_id = (
+                        SELECT class_id
+                        FROM
+                            ga_student
+                        WHERE
+                            user_id = #{userId}
+                    )
+            )
+            AND uer.exam_id = #{examId}
+    </select>
+
+    <select id="findExamNameAndScore" resultMap="BarChartDataMap">
+        SELECT
+            (
+                SELECT exam_name
+                FROM
+                    ga_exam
+                WHERE
+                    id = uer.exam_id
+            ) AS exam_name,
+            (
+                subjective_score + objective_score
+            ) AS gain_score,
+            finished_date
+        FROM
+            ga_user_exam_record uer
+        WHERE
+            user_id = #{userId}
+            AND STATUS = 4
+        ORDER BY
+            finished_date
+    </select>
+
+    <select id="findExamRank" resultMap="LineChartDataMap">
+        SELECT
+            t.exam_name,
+            (
+                SELECT count(
+                        DISTINCT (
+                            subjective_score + objective_score
+                        )
+                )
+                FROM
+                    ga_user_exam_record er
+                WHERE
+                    (
+                        subjective_score + objective_score
+                    ) > t.gain_score
+                    AND er.exam_id = t.exam_id
+                    AND er.`status` = 4
+            ) + 1 AS rank
+        FROM
+            (
+                SELECT
+                    e.exam_name,
+                    exam_id,
+                    (
+                        subjective_score + objective_score
+                    ) AS gain_score
+                FROM
+                    ga_user_exam_record uer
+                    JOIN ga_exam e ON uer.exam_id = e.id
+                                      AND e.end_date &lt; #{now}
+                WHERE
+                    uer.user_id = #{userId}
+                    AND uer.STATUS = 4
+            ) t
+    </select>
 
 </mapper>

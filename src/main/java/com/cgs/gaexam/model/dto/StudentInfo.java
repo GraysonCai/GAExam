@@ -19,6 +19,38 @@ public class StudentInfo {
     private Long phone;
     private String email;
     private Date createDate;
+    private String studentNo;
+
+    @Override
+    public String toString() {
+        return "StudentInfo{" +
+                "studentId=" + studentId +
+                ", userId=" + userId +
+                ", academy='" + academy + '\'' +
+                ", academyId=" + academyId +
+                ", grade='" + grade + '\'' +
+                ", className='" + className + '\'' +
+                ", password='" + password + '\'' +
+                ", classId=" + classId +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", age=" + age +
+                ", sex=" + sex +
+                ", enabled=" + enabled +
+                ", phone=" + phone +
+                ", email='" + email + '\'' +
+                ", createDate=" + createDate +
+                ", studentNo='" + studentNo + '\'' +
+                '}';
+    }
+
+    public String getStudentNo() {
+        return studentNo;
+    }
+
+    public void setStudentNo(String studentNo) {
+        this.studentNo = studentNo;
+    }
 
     public Long getStudentId() {
         return studentId;
@@ -148,23 +180,4 @@ public class StudentInfo {
         this.createDate = createDate;
     }
 
-    @Override
-    public String toString() {
-        return "StudentInfo{" +
-                "userId=" + userId +
-                ", academy='" + academy + '\'' +
-                ", academyId=" + academyId +
-                ", grade='" + grade + '\'' +
-                ", className='" + className + '\'' +
-                ", classId=" + classId +
-                ", name='" + name + '\'' +
-                ", username='" + username + '\'' +
-                ", age=" + age +
-                ", sex=" + sex +
-                ", phone=" + phone +
-                ", email='" + email + '\'' +
-                ", enabled=" + enabled +
-                ", createDate=" + createDate +
-                '}';
-    }
 }

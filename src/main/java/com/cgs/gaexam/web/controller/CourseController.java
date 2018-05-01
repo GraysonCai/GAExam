@@ -53,6 +53,12 @@ public class CourseController {
         return ResultGenerator.genSuccessResult(pageInfo);
     }
 
+    @GetMapping("/user/{userId}")
+    public Result listTeacherCourseByUser(@PathVariable("userId") long userId) {
+        List<Course> list = courseService.findTeacherCourseByUser(userId);
+        return ResultGenerator.genSuccessResult(list);
+    }
+
     @GetMapping("list")
     public Result list() {
         List<Course> list = courseService.findAll();

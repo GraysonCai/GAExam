@@ -36,6 +36,12 @@ public class Student {
     private Long academyId;
 
     /**
+     * 学号
+     */
+    @Column(name = "student_no")
+    private String StudentNo;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_date")
@@ -46,6 +52,14 @@ public class Student {
      */
     @Column(name = "create_by")
     private Long createBy;
+
+    public String getStudentNo() {
+        return StudentNo;
+    }
+
+    public void setStudentNo(String studentNo) {
+        StudentNo = studentNo;
+    }
 
     /**
      * 获取学员id
@@ -187,6 +201,20 @@ public class Student {
         this.grade = grade;
         this.classId = classId;
         this.academyId = academyId;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", grade='" + grade + '\'' +
+                ", classId=" + classId +
+                ", academyId=" + academyId +
+                ", StudentNo='" + StudentNo + '\'' +
+                ", createDate=" + createDate +
+                ", createBy=" + createBy +
+                '}';
     }
 
     public Student() {

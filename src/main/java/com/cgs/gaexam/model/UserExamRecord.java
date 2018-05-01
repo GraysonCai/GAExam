@@ -56,13 +56,13 @@ public class UserExamRecord {
      * 主观题得分
      */
     @Column(name = "subjective_score")
-    private Integer subjectiveScore;
+    private Float subjectiveScore;
 
     /**
      * 客观题得分
      */
     @Column(name = "objective_score")
-    private Integer objectiveScore;
+    private Float objectiveScore;
 
     /**
      * 开始考试时间
@@ -243,7 +243,7 @@ public class UserExamRecord {
      *
      * @return subjective_score - 主观题得分
      */
-    public Integer getSubjectiveScore() {
+    public Float getSubjectiveScore() {
         return subjectiveScore;
     }
 
@@ -252,7 +252,7 @@ public class UserExamRecord {
      *
      * @param subjectiveScore 主观题得分
      */
-    public void setSubjectiveScore(Integer subjectiveScore) {
+    public void setSubjectiveScore(Float subjectiveScore) {
         this.subjectiveScore = subjectiveScore;
     }
 
@@ -261,7 +261,7 @@ public class UserExamRecord {
      *
      * @return objective_score - 客观题得分
      */
-    public Integer getObjectiveScore() {
+    public Float getObjectiveScore() {
         return objectiveScore;
     }
 
@@ -270,7 +270,7 @@ public class UserExamRecord {
      *
      * @param objectiveScore 客观题得分
      */
-    public void setObjectiveScore(Integer objectiveScore) {
+    public void setObjectiveScore(Float objectiveScore) {
         this.objectiveScore = objectiveScore;
     }
 
@@ -379,7 +379,7 @@ public class UserExamRecord {
         this.createBy = createBy;
     }
 
-    public UserExamRecord(Long userId, Long paperId, Long examId, String examRoomNo, Integer examSeatNo, Byte status, Byte result, Integer subjectiveScore, Integer objectiveScore, Date beginDate, Date finishedDate, Date createDate, Long createBy, String answerSheet) {
+    public UserExamRecord(Long userId, Long paperId, Long examId, String examRoomNo, Integer examSeatNo, Byte status, Byte result, Float subjectiveScore, Float objectiveScore, Date beginDate, Date finishedDate, Date createDate, Long createBy, String answerSheet) {
         this.userId = userId;
         this.paperId = paperId;
         this.examId = examId;

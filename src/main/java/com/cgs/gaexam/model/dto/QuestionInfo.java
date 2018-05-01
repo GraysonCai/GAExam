@@ -9,6 +9,9 @@ public class QuestionInfo extends Question {
     private String createUser;
     //组卷使用
     private double score;
+    private String answerSheet;     //用户的答题卡，用于显示原答案
+    private String isRight;     //用户的答题卡，用于显示原答案
+
 
     @Override
     public String toString() {
@@ -18,7 +21,25 @@ public class QuestionInfo extends Question {
                 ", knowledgeIdsName='" + knowledgeIdsName + '\'' +
                 ", createUser='" + createUser + '\'' +
                 ", score=" + score +
+                ", answerSheet='" + answerSheet + '\'' +
+                ", isRight='" + isRight + '\'' +
                 "} " + super.toString();
+    }
+
+    public String getIsRight() {
+        return isRight;
+    }
+
+    public void setIsRight(String isRight) {
+        this.isRight = isRight;
+    }
+
+    public String getAnswerSheet() {
+        return answerSheet;
+    }
+
+    public void setAnswerSheet(String answerSheet) {
+        this.answerSheet = answerSheet;
     }
 
     public double getScore() {

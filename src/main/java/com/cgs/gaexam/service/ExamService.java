@@ -48,4 +48,20 @@ public interface ExamService extends Service<Exam> {
      */
     void publishById(long examId);
 
+    /**
+     * 某个用户开始某场考试
+     *
+     * @param userId
+     * @param examId
+     */
+    void startExam(long userId, long examId);
+
+    /**
+     * 查找用户已完成的考试
+     *
+     * @param userId
+     * @return
+     */
+    List<Exam> findFinishedExam(long userId);
+
 }

@@ -49,6 +49,11 @@
         <result column="createUser" jdbcType="VARCHAR" property="createUser"/>
     </resultMap>
 
+    <resultMap id="QuestionAnswerMap" type="com.cgs.gaexam.model.Question">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="answer" jdbcType="VARCHAR" property="answer"/>
+    </resultMap>
+
 
     <select id="findAllPaperInfo" resultMap="PaperInfoMap">
         SELECT
@@ -78,4 +83,15 @@
         FROM ga_paper p
         WHERE p.id = #{id}
     </select>
+
+    <select id="findQuestionAnswer" resultMap="QuestionAnswerMap">
+        SELECT q.id,q.answer
+        FROM ga_question q
+        WHERE q.id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
 </mapper>

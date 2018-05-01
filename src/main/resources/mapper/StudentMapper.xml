@@ -10,6 +10,7 @@
         <result column="grade" jdbcType="VARCHAR" property="grade"/>
         <result column="class_id" jdbcType="BIGINT" property="classId"/>
         <result column="academy_id" jdbcType="BIGINT" property="academyId"/>
+        <result column="student_no" jdbcType="VARCHAR" property="studentNo"/>
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="create_by" jdbcType="BIGINT" property="createBy"/>
     </resultMap>
@@ -19,6 +20,7 @@
         <result column="user_id" property="userId"/>
         <result column="academy_name" property="academy"/>
         <result column="academy_id" property="academyId"/>
+        <result column="student_no" jdbcType="VARCHAR" property="studentNo"/>
         <result column="grade" property="grade"/>
         <result column="class_name" property="className"/>
         <result column="class_id" property="classId"/>
@@ -38,6 +40,7 @@
             a.academy_name,
             s.grade,
             s.id AS student_id,
+        s.student_no,
             c.id AS class_id,
             c.class_name,
             u.id AS user_id,
@@ -72,6 +75,7 @@
             a.academy_name,
             s.grade,
             s.id AS student_id,
+        s.student_no,
             c.id AS class_id,
             c.class_name,
             u.id AS user_id,
@@ -107,6 +111,9 @@
                 </if>
                 <if test="s.grade != null">
                     grade = #{s.grade},
+                </if>
+                <if test="s.studentNo != null">
+                    student_no = #{s.studentNo},
                 </if>
             </trim>
             WHERE 1 = 1

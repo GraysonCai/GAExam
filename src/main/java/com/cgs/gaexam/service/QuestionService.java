@@ -45,6 +45,15 @@ public interface QuestionService extends Service<Question> {
      */
     QuestionInfo getQuestionInfoById(Long questionId);
 
+
+    /**
+     * 通过试题记录id查找错题信息
+     *
+     * @param questionRecordId
+     * @return
+     */
+    QuestionInfo getQuestionDetailById(long questionRecordId);
+
     /**
      * 通过课程和相应知识点查找特定题型的试题
      *

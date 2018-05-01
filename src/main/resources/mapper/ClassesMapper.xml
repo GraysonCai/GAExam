@@ -12,4 +12,15 @@
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="create_by" jdbcType="BIGINT" property="createBy"/>
     </resultMap>
+
+    <select id="getUserClass" resultMap="BaseResultMap">
+        SELECT *
+        FROM ga_class
+        WHERE id = (
+            SELECT class_id
+            FROM ga_student
+            WHERE user_id = #{userId}
+        )
+    </select>
+
 </mapper>

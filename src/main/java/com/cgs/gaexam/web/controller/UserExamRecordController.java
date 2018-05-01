@@ -3,7 +3,7 @@ package com.cgs.gaexam.web.controller;
 import com.cgs.gaexam.core.Result;
 import com.cgs.gaexam.core.ResultGenerator;
 import com.cgs.gaexam.model.UserExamRecord;
-import com.cgs.gaexam.model.dto.UserExamRecordInfo;
+import com.cgs.gaexam.model.dto.*;
 import com.cgs.gaexam.service.UserExamRecordService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -54,9 +54,66 @@ public class UserExamRecordController {
         return ResultGenerator.genSuccessResult(pageInfo);
     }
 
+    @GetMapping("/user/{userId}/read")
+    public Result listWaitToReadPaper(@PathVariable("userId") long userId, @RequestParam(defaultValue = "0") long examId, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
+        PageHelper.startPage(page, size);
+        List<UserExamRecordInfo> list = userExamRecordService.findWaitToReadPaperByUser(userId);
+        PageInfo pageInfo = new PageInfo(list);
+        return ResultGenerator.genSuccessResult(pageInfo);
+    }
+
     @GetMapping("/user/{userId}")
     public Result list(@PathVariable("userId") long userId) {
         List<UserExamRecordInfo> list = userExamRecordService.findUserExamRecordInfo(userId);
         return ResultGenerator.genSuccessResult(list);
     }
+
+    @GetMapping("/history/user/{userId}")
+    public Result listUserHistoryRecord(@PathVariable("userId") long userId) {
+        List<UserExamRecordInfo> list = userExamRecordService.findUserHistoryExamRecordInfo(userId);
+        return ResultGenerator.genSuccessResult(list);
+    }
+
+    @GetMapping("/history/detail/{recordId}")
+    public Result detailUserHistoryRecord(@PathVariable("recordId") long recordId) {
+        UserExamRecordInfo userExamRecordInfo = userExamRecordService.getUserHistoryExamRecordDetailInfo(recordId);
+        return ResultGenerator.genSuccessResult(userExamRecordInfo);
+    }
+
+    @GetMapping("/user/{userId}/exam/{examId}/chart/pie")
+    public Result getPieChartOption(@PathVariable("userId") long userId, @PathVariable("examId") long examId) {
+        PieChartOption pieChartOption = userExamRecordService.getPieChartOption(userId, examId);
+        return ResultGenerator.genSuccessResult(pieChartOption);
+    }
+
+    @GetMapping("/user/{userId}/chart/bar")
+    public Result getBarChartOption(@PathVariable("userId") long userId) {
+        BarChartOption barChartOption = userExamRecordService.getBarChartOption(userId);
+        return ResultGenerator.genSuccessResult(barChartOption);
+    }
+
+    @GetMapping("/user/{userId}/chart/line")
+    public Result getLineChartOption(@PathVariable("userId") long userId) {
+        LineChartOption lineChartOption = userExamRecordService.getLineChartOption(userId);
+        return ResultGenerator.genSuccessResult(lineChartOption);
+    }
+
+
+    @PostMapping("/answer")
+    public Result submitAnswerSheet(@RequestBody UserExamRecord userExamRecord) {
+        //userExamRecordService.save(userExamRecord);
+        userExamRecordService.submitAnswerSheet(userExamRecord);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @PostMapping("/markScore")
+    public Result submitMarkScore(@RequestBody ReadExamInfo readExamInfo) {
+        //userExamRecordService.save(userExamRecord);
+//        userExamRecordService.submitAnswerSheet(userExamRecord);
+        System.out.println(readExamInfo);
+        userExamRecordService.submitMarkScore(readExamInfo);
+        return ResultGenerator.genSuccessResult();
+    }
+
+
 }

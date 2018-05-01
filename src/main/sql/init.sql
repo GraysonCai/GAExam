@@ -226,12 +226,14 @@ CREATE TABLE ga_class (
 CREATE TABLE ga_student (
   id          BIGINT       AUTO_INCREMENT
   COMMENT '学员id',
-  user_id     BIGINT NOT NULL
+  user_id     BIGINT      NOT NULL
   COMMENT '用户id',
   grade       VARCHAR(100) DEFAULT ''
-  COMMENT '第几届',
+  COMMENT '第几级',
   class_id    BIGINT COMMENT '班级id',
   academy_id  BIGINT COMMENT '学院id',
+  student_no  VARCHAR(32) NOT NULL
+  COMMENT '学号',
   create_date TIMESTAMP    DEFAULT current_timestamp
   COMMENT '创建时间',
   create_by   BIGINT       DEFAULT 1
@@ -495,9 +497,11 @@ CREATE TABLE ga_user_exam_record (
   COMMENT '考场座位号',
   status           TINYINT     NOT NULL
   COMMENT '考试状态, ，0等待考试，1考试进行中，2考试中途退出, 3考试完成',
-  result           TINYINT COMMENT '考试结果，0未参与，1不及格，2及格',
-  subjective_score INT(4) COMMENT '主观题得分',
-  objective_score  INT(4) COMMENT '客观题得分',
+  result           TINYINT COMMENT '考试结果，0未参与，1不及格，2及格，3等待结果中',
+  subjective_score FLOAT(5, 2)          DEFAULT 0
+  COMMENT '主观题得分',
+  objective_score  FLOAT(5, 2)          DEFAULT 0
+  COMMENT '客观题得分',
   begin_date       DATETIME COMMENT '开始考试时间',
   finished_date    DATETIME COMMENT '结束考试时间',
   answer_sheet     TEXT COMMENT '答题卡',
@@ -516,4 +520,104 @@ CREATE TABLE ga_user_exam_record (
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COMMENT ='考生考试记录表';
+
+CREATE TABLE ga_notice (
+  id          BIGINT                                                                                                                                                                                       AUTO_INCREMENT
+  COMMENT '公告id',
+  title   VARCHAR(255)  NOT NULL                                                                                                                                                                        DEFAULT ''
+  COMMENT '标题',
+  content VARCHAR(3000) NOT NULL                                                                                                                                                                       DEFAULT ''
+  COMMENT '公告内容',
+  #   read_count     INT(4)      NOT NULL DEFAULT 0
+  #   COMMENT '阅读量',
+  create_date TIMESTAMP NOT NULL                                                                                                                                                                           DEFAULT CURRENT_TIMESTAMP
+  COMMENT '创建时间',
+  create_by   BIGINT                                                                                                                                                                                       DEFAULT 1
+  COMMENT '创建人',
+  PRIMARY KEY (id)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COMMENT ='公告表';
+
+CREATE TABLE ga_user_question_record (
+  id             BIGINT               AUTO_INCREMENT
+  COMMENT '记录id',
+  user_id BIGINT             NOT NULL
+  COMMENT '考生id',
+  exam_id BIGINT NOT NULL
+  COMMENT '考试id',
+  question_id BIGINT NOT NULL
+  COMMENT '试题id',
+  question_score FLOAT(5, 2) NOT NULL DEFAULT 0
+  COMMENT '试题分数',
+  gain_score     FLOAT(5, 2) NOT NULL DEFAULT 0
+  COMMENT '获得分数',
+  is_right       TINYINT     NOT NULL DEFAULT -1
+  COMMENT '是否正确, -1表示初始值，0不正确，1正确',
+  subjective     TINYINT COMMENT '是否是主观题，0代表客观题，1代表主观题',
+  create_date    TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+  COMMENT '创建时间',
+  create_by      BIGINT               DEFAULT 1
+  COMMENT '创建人',
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES ga_user (id),
+  FOREIGN KEY (exam_id) REFERENCES ga_exam (id),
+  FOREIGN KEY (question_id) REFERENCES ga_question (id),
+  UNIQUE KEY `pk_user_exam_question` (`user_id`, `exam_id`, question_id)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COMMENT ='考生试题作答记录表';
+
+
+CREATE TABLE ga_student_card (
+  id          BIGINT             AUTO_INCREMENT
+  COMMENT '记录id',
+  card_no VARCHAR(64)   NOT NULL
+  COMMENT '卡号',
+  user_id BIGINT      NOT NULL
+  COMMENT '用户id',
+  student_id BIGINT   NOT NULL
+  COMMENT '学生id',
+  create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  COMMENT '创建时间',
+  create_by   BIGINT             DEFAULT 1
+  COMMENT '创建人',
+  PRIMARY KEY (id),
+  KEY index_card_no (card_no),
+  FOREIGN KEY (student_id) REFERENCES ga_student (id),
+  FOREIGN KEY (user_id) REFERENCES ga_user (id),
+  UNIQUE KEY `pk_student_card_no` (`student_id`, `card_no`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COMMENT ='学生卡片关联表';
+
+CREATE TABLE ga_exam_sign_in (
+  id          BIGINT             AUTO_INCREMENT
+  COMMENT '记录id',
+  exam_id BIGINT        NOT NULL
+  COMMENT '考试id',
+  room_no VARCHAR(50) NOT NULL
+  COMMENT '考场编号',
+  card_no VARCHAR(64) NOT NULL
+  COMMENT '卡号',
+  user_id BIGINT      NOT NULL
+  COMMENT '用户id',
+  student_id BIGINT   NOT NULL
+  COMMENT '学生id',
+  create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  COMMENT '创建时间',
+  create_by   BIGINT             DEFAULT 1
+  COMMENT '创建人',
+  PRIMARY KEY (id),
+  KEY index_card_no (card_no),
+  FOREIGN KEY (student_id) REFERENCES ga_student (id),
+  FOREIGN KEY (user_id) REFERENCES ga_user (id),
+  FOREIGN KEY (exam_id) REFERENCES ga_exam (id)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COMMENT ='考试签到表';
 

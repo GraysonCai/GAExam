@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.UserQuestionRecordMapper">
+    <resultMap id="BaseResultMap" type="com.cgs.gaexam.model.UserQuestionRecord">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="exam_id" jdbcType="BIGINT" property="examId"/>
+        <result column="question_id" jdbcType="BIGINT" property="questionId"/>
+        <result column="question_score" jdbcType="REAL" property="questionScore"/>
+        <result column="gain_score" jdbcType="REAL" property="gainScore"/>
+        <result column="is_right" jdbcType="TINYINT" property="isRight"/>
+        <result column="subjective" jdbcType="TINYINT" property="subjective"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+    </resultMap>
+
+    <resultMap id="QuestionRecordInfoMap" type="com.cgs.gaexam.model.dto.UserQuestionRecordInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="exam_id" jdbcType="BIGINT" property="examId"/>
+        <result column="question_id" jdbcType="BIGINT" property="questionId"/>
+        <result column="question_score" jdbcType="REAL" property="questionScore"/>
+        <result column="gain_score" jdbcType="REAL" property="gainScore"/>
+        <result column="is_right" jdbcType="TINYINT" property="isRight"/>
+        <result column="subjective" jdbcType="TINYINT" property="subjective"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+
+        <!--dto字段-->
+        <result column="stem" jdbcType="VARCHAR" property="stem"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="exam_name" jdbcType="VARCHAR" property="examName"/>
+        <result column="knowledge_ids_name" jdbcType="VARCHAR" property="knowledgeIdsName"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="answerDate"/>
+    </resultMap>
+
+    <select id="findUserWrongQuestionRecord" resultMap="QuestionRecordInfoMap">
+        SELECT
+            uqr.id,
+            uqr.question_id,
+            uqr.is_right,
+            q.stem,
+            (SELECT e.exam_name
+             FROM ga_exam e
+             WHERE e.id = uqr.exam_id)                     AS exam_name,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = q.course_id)                     AS course_name,
+            (SELECT group_concat(k.knowledge_name)
+             FROM ga_knowledge k
+             WHERE FIND_IN_SET(k.id, q.knowledge_ids) > 0) AS
+                                                              knowledge_ids_name,
+            uqr.create_date
+        FROM `ga_user_question_record` uqr
+            JOIN ga_question q ON uqr.question_id = q.id
+                                  AND user_id = #{userId}
+                                  AND is_right = 0
+        ORDER BY uqr.create_date DESC
+    </select>
+
+    <select id="findUserAllQuestionRecord" resultMap="QuestionRecordInfoMap">
+        SELECT
+            uqr.id,
+            uqr.question_id,
+            uqr.is_right,
+            q.stem,
+            (SELECT e.exam_name
+             FROM ga_exam e
+             WHERE e.id = uqr.exam_id)                     AS exam_name,
+            (SELECT c.course_name
+             FROM ga_course c
+             WHERE c.id = q.course_id)                     AS course_name,
+            (SELECT group_concat(k.knowledge_name)
+             FROM ga_knowledge k
+             WHERE FIND_IN_SET(k.id, q.knowledge_ids) > 0) AS
+                                                              knowledge_ids_name,
+            uqr.create_date
+        FROM `ga_user_question_record` uqr
+            JOIN ga_question q ON uqr.question_id = q.id
+                                  AND user_id = #{userId}
+        ORDER BY uqr.create_date DESC
+
+    </select>
+
+    <select id="findBy" resultMap="BaseResultMap">
+        SELECT *
+        FROM ga_user_question_record
+        WHERE exam_id = #{examId}
+        AND user_id = #{userId}
+        <if test="questionIds != null">
+            AND question_id IN
+            <foreach collection="questionIds" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

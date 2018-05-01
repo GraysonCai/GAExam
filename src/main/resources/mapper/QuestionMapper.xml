@@ -38,6 +38,8 @@
         <result column="courseName" jdbcType="VARCHAR" property="courseName"/>
         <result column="knowledgeIdsName" jdbcType="VARCHAR" property="knowledgeIdsName"/>
         <result column="createUser" jdbcType="VARCHAR" property="createUser"/>
+        <result column="answer_sheet" jdbcType="VARCHAR" property="answerSheet"/>
+        <result column="is_right" jdbcType="TINYINT" property="isRight"/>
     </resultMap>
 
     <select id="findAllQuestionInfo" resultMap="QuestionInfoMap">
@@ -105,7 +107,25 @@
         FROM ga_question q
             JOIN ga_question_type t ON t.id = q.question_type_id
         WHERE q.id = #{id}
-        ORDER BY q.create_date DESC
+    </select>
+
+    <select id="getQuestionDetailById" resultMap="QuestionInfoMap">
+        SELECT
+        q.*,
+        uer.answer_sheet,
+        uqr.is_right,
+        t.type_name AS typeName,
+        (SELECT c.course_name
+        FROM ga_course c
+        WHERE c.id = q.course_id) AS courseName,
+        (SELECT group_concat(k.knowledge_name)
+        FROM ga_knowledge k
+        WHERE FIND_IN_SET(k.id, q.knowledge_ids) > 0) AS knowledgeIdsName
+        FROM ga_user_question_record uqr
+        JOIN ga_user_exam_record uer ON uqr.exam_id = uer.exam_id AND uqr.user_id = uer.user_id
+        JOIN ga_question q ON uqr.question_id = q.id
+        JOIN ga_question_type t ON t.id = q.question_type_id
+        WHERE uqr.id = #{questionRecordId}
     </select>
 
     <select id="find" resultMap="QuestionInfoMap">

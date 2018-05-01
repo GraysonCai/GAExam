@@ -75,4 +75,16 @@ public class ExamController {
         return ResultGenerator.genSuccessResult(pageInfo);
     }
 
+    @PostMapping("/start/{userId}/{examId}")
+    public Result updateAndPublish(@PathVariable("userId") long userId, @PathVariable("examId") long examId) {
+        examService.startExam(userId, examId);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @GetMapping("/finished/user/{userId}")
+    public Result finished(@PathVariable("userId") long userId) {
+        List<Exam> finishedExamList = examService.findFinishedExam(userId);
+        return ResultGenerator.genSuccessResult(finishedExamList);
+    }
+
 }

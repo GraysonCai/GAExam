@@ -26,5 +26,12 @@ public interface ExamMapper extends Mapper<Exam> {
      */
     ExamInfo getExamInfoById(@Param("examId") long examId);
 
+    /**
+     * 查找用户已完成的考试
+     *
+     * @param userId
+     * @return
+     */
+    List<Exam> findFinishedExam(@Param("userId") long userId);
 
 }

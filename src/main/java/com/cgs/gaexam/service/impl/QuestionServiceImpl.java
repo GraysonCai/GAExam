@@ -73,6 +73,11 @@ public class QuestionServiceImpl extends AbstractService<Question> implements Qu
     }
 
     @Override
+    public QuestionInfo getQuestionDetailById(long questionRecordId) {
+        return gaQuestionMapper.getQuestionDetailById(questionRecordId);
+    }
+
+    @Override
     public QuestionInfo getQuestionInfoById(Long questionId) {
         return gaQuestionMapper.getQuestionInfoById(questionId);
     }

@@ -180,7 +180,7 @@ public class ExamServiceImpl extends AbstractService<Exam> implements ExamServic
                     //如两个班级，第1（i=0）个班级是1、3、5、7，那么第2（i=1）个班级就是2，4，6，8
                     UserExamRecord userExamRecord = new UserExamRecord(tempStudent.getUserId(), paperId, examId,
                             examRoomList.get(j).getRoomNo(), tmp[j][i] + i + 1,
-                            ProjectConstant.STUDENT_EXAM_WAITING_CODE, ProjectConstant.EXAM_UNATTEND_CODE, new Date(), 1L);
+                            ProjectConstant.STUDENT_EXAM_WAITING_CODE, ProjectConstant.EXAM_UNATTEND_CODE, 0F, 0F, null, null, new Date(), 1L, null);
                     userExamRecords.add(userExamRecord);
                     studentList.set(index, studentList.get(studentList.size() - temp - 1));
                     studentList.set(studentList.size() - temp - 1, tempStudent);
@@ -194,6 +194,24 @@ public class ExamServiceImpl extends AbstractService<Exam> implements ExamServic
         System.out.println(userExamRecords);
         userExamRecordMapper.insertList(userExamRecords);
     }
+
+    @Override
+    public void startExam(long userId, long examId) {
+        UserExamRecord userExamRecord = new UserExamRecord();
+        userExamRecord.setUserId(userId);
+        userExamRecord.setExamId(examId);
+        userExamRecord = userExamRecordMapper.selectOne(userExamRecord);
+        userExamRecord.setBeginDate(new Date());
+        userExamRecord.setStatus(ProjectConstant.STUDENT_EXAM_TESTING_CODE);
+        userExamRecordMapper.updateByPrimaryKeySelective(userExamRecord);
+
+    }
+
+    @Override
+    public List<Exam> findFinishedExam(long userId) {
+        return gaExamMapper.findFinishedExam(userId);
+    }
+
 
     public static void main(String[] args) {
         System.out.println(31 * 40 / 78);

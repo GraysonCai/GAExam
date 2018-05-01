@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgs.gaexam.dao.StatisticsMapper">
+    <resultMap id="CurriculumMasteryMap" type="com.cgs.gaexam.model.dto.CurriculumMastery">
+        <!--
+          WARNING - @mbg.generated
+          private int totalDoneQuestionNumber;    //共做了多少题
+          private int rightQuestionNumber;    //作对了多少题
+          private List<CurriculumDetail> curriculumDetailList;    //课程掌握情况详情列表
+        -->
+        <id column="userId" jdbcType="BIGINT" property="userId"/>
+        <result column="totalDoneQuestionNumber" jdbcType="INTEGER" property="totalDoneQuestionNumber"/>
+        <result column="rightQuestionNumber" jdbcType="INTEGER" property="rightQuestionNumber"/>
+    </resultMap>
+
+    <resultMap id="CurriculumDetailMap" type="com.cgs.gaexam.model.dto.CurriculumDetail">
+        <!--
+        private long courseId;
+        private String courseName;
+        private int courseDoneQuestionNumber;       // 该课程已做的题目
+        private int courseCorrectQuestionNumber;    // 该课程作对的题目
+        private int courseTotalQuestionNumber;      // 该课程总的题目数
+        -->
+        <id column="courseId" jdbcType="BIGINT" property="courseId"/>
+        <result column="courseName" jdbcType="VARCHAR" property="courseName"/>
+        <result column="courseDoneQuestionNumber" jdbcType="INTEGER" property="courseDoneQuestionNumber"/>
+        <result column="courseCorrectQuestionNumber" jdbcType="INTEGER" property="courseCorrectQuestionNumber"/>
+        <result column="courseTotalQuestionNumber" jdbcType="INTEGER" property="courseTotalQuestionNumber"/>
+    </resultMap>
+
+    <select id="statisticsCurriculumMasteryByUserId" resultMap="CurriculumMasteryMap">
+        SELECT
+            user_id           AS userId,
+            count(*)          AS totalDoneQuestionNumber,
+            sum(is_right = 1) AS rightQuestionNumber
+        FROM
+            ga_user_question_record
+        WHERE
+            user_id = #{userId}
+            AND subjective = 0
+    </select>
+
+    <select id="statisticsCurriculumDetailByUserId" resultMap="CurriculumDetailMap">
+        SELECT
+            t.course_id                AS courseId,
+            t.course_name              AS courseName,
+            count(*)                   AS courseTotalQuestionNumber,
+            sum(t.user_id = #{userId}) AS courseDoneQuestionNumber,
+            sum(
+                    t.is_right = '1'
+                    AND t.user_id = #{userId}
+            )                          AS courseCorrectQuestionNumber
+        FROM
+            (
+                SELECT
+                    uqr.*,
+                    q.course_id,
+                    c.course_name
+                FROM
+                    ga_user_question_record uqr
+                    JOIN ga_question q ON uqr.question_id = q.id
+                    JOIN ga_course c ON q.course_id = c.id
+                WHERE
+                    subjective = 0
+            ) t
+        GROUP BY
+            t.course_id;
+    </select>
+</mapper>
